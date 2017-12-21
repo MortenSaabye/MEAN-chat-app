@@ -19,23 +19,29 @@ router.get('/', (req, res) => {
 //insert a new user
 router.post('/signUp', (req, res) => {
   const user = new User(req.body)
-  user.save((err, result) => {
-    if(err != null) {
-      console.log(err)
-      res.send(`something went wrong ${err}`)
+  User.findOne({username: user.username}, (err, result) => {
+    if(result) {
+      res.json({'message': 'username already taken'})
     } else {
-      console.log('user was added to db')
-      res.status(200)
-      req.login(user, (err) => {
-        if (err) {
+      user.save((err, result) => {
+        if(err != null) {
           console.log(err)
-          res.send(`${err}`)
+          res.send(`something went wrong ${err}`)
+        } else {
+          console.log('user was added to db')
+          res.status(200)
+          req.login(user, (err) => {
+            if (err) {
+              console.log(err)
+              res.send(`${err}`)
+            }
+            let user = {
+              username: result.username,
+              id: result._id
+            }
+            res.json(user)
+          })
         }
-        let user = {
-          username: result.username,
-          id: result._id
-        }
-        res.json(user)
       })
     }
   })
@@ -52,17 +58,25 @@ router.patch('/change-mood', (req, res) => {
   })
 })
 router.post('/login', (req, res) => {
+  if(!req.body.password || !req.body.username) {
+    res.json({"message": "login is wrong"})
+    return
+  }
   User.findOne({username: req.body.username}, (err, user) => {
-    if(err) {
+    if(!user) {
       res.json({"message": "login is wrong"})
+      return
     }
     if(user) {
-      console.log(user)
-      let userObj = {
-        username: user.username,
-        id: user._id
+      if(user.password === user.hashPassword(req.body.password)){
+        let userObj = {
+          username: user.username,
+          id: user._id
+        }
+        res.json(userObj)
+      } else {
+        res.json({"message": "login is wrong"})
       }
-      res.json(userObj)
     }
   })
 })

@@ -13,4 +13,13 @@
     <button class="col s6" (click)="create()" class="btn waves-effect waves-light" type="submit" name="action">Create new account
       </button>
 </div>
-
+<div *ngIf="cookiesEnabled===false" class="row cookiebanner">
+  <p>Please enable cookies to use this application</p>
+</div>
+<div *ngIf="usernameTaken===true" class="row cookiebanner">
+  <p>Username already in use. select another.</p>
+</div>
+<div *ngIf="invalidLogin===true" class="row cookiebanner">
+    <p>Your login credentials didn't seem to be correct.</p>
+</div>
+  

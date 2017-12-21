@@ -10,7 +10,7 @@ const passport = require('passport')
 
 
 //db connection
-const CONNECTION_URI = "mongodb://MortenSaabye:AS3GytR5Jb@ds161136.mlab.com:61136/chat"
+let CONNECTION_URI = require('./connectionsstring')
 
 mongoose.connect(CONNECTION_URI, {useMongoClient: true})
 mongoose.Promise = global.Promise
@@ -48,7 +48,7 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'public/dist')));
 require('./auth/passport')()
 app.use(session({
   resave: false,
@@ -60,11 +60,11 @@ app.use(passport.session())
 
 
 
+
 //Import and register all routers
 var index = require('./routes/index');
 var users = require('./routes/users');
 const rooms = require('./routes/rooms')
-
 
 app.use('/', index)
 app.use('/api/users', users);
@@ -75,8 +75,7 @@ app.use('/api/rooms', rooms);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
-  var err = new Error('Not Found');
-  err.status = 404;
+  res.redirect('/')
   next(err);
 });
 

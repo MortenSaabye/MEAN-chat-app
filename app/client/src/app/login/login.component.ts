@@ -14,6 +14,9 @@ import { SocketService } from '../../services/socket/socket.service'
 export class LoginComponent implements OnInit {
   username: string
   password: string
+  cookiesEnabled
+  usernameTaken
+  invalidLogin
   constructor(
     private cookieService: CookieService, 
     private loginService: LoginService,
@@ -21,25 +24,50 @@ export class LoginComponent implements OnInit {
     private socketService: SocketService) { }
 
   ngOnInit() {
-    
   }
 
   login(): void {
+    this.usernameTaken = false
+    this.invalidLogin = false
+    this.cookiesEnabled = navigator.cookieEnabled
+    if(!this.cookiesEnabled){
+      return
+    }
     this.socketService.createSocket()
     this.loginService.login(this.username, this.password).subscribe((user) => {
-      console.log(user)
-      this.cookieService.put("isLoggedIn", "true")
-      this.cookieService.put("userId", user.id)
-      this.cookieService.put("username", user.username)
+      if(!user.username) {
+        this.invalidLogin = true
+        return
+      } else {
+        this.invalidLogin = false
+      }
       this.router.navigateByUrl('/rooms')
+      this.setupCookies(user)
     })
   }
   create(): void {
+    this.usernameTaken = false
+    this.invalidLogin = false
+    this.cookiesEnabled = navigator.cookieEnabled
+    if(!this.cookiesEnabled){
+      return
+    }
     this.loginService.create(this.username, this.password).subscribe((user) => {
-      this.cookieService.put("isLoggedIn", "true")
-      this.cookieService.put("userId", user.id)
-      this.cookieService.put("username", user.username)
+      if(!user.username) {
+        this.usernameTaken = true
+        return
+      } else {
+        this.usernameTaken = false
+      }
+      this.socketService.createSocket()
       this.router.navigateByUrl('/rooms')
+      this.setupCookies(user)
     })
+  }
+
+  setupCookies(user){
+    this.cookieService.put("isLoggedIn", "true")
+    this.cookieService.put("userId", user.id)
+    this.cookieService.put("username", user.username)
   }
 }

@@ -13,13 +13,13 @@ export class LoginService {
   login(username: string, password: string): Observable<any> {
     let auth = {username: username, password: password}
     return this.http.post<any>(this.url+"/login", auth).pipe(
-      tap(_ => this.didLogIn.emit(username))
+      tap(user => this.didLogIn.emit(user['username']))
     )
   }
   create(username: string, password: string): Observable<any> {
     let auth = {username: username, password: password}
     return this.http.post<any>(this.url+"/signUp", auth).pipe(
-      tap(_ => this.didLogIn.emit(username))
+      tap(user => this.didLogIn.emit(user['username']))
     )
   }
 }

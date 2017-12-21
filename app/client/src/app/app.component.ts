@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { CookieService } from 'ngx-cookie'
 import { Router } from '@angular/router'
 import { LoginService } from '../services/login/login.service'
+import { CookieService } from 'ngx-cookie'
 import { RoomService } from '../services/room/room.service'
-import { tap } from 'rxjs/operators/tap';
 import { SocketService } from '../services/socket/socket.service'
+import { tap } from 'rxjs/operators/tap';
 
 @Component({
   selector: 'app-root',
@@ -22,8 +22,9 @@ export class AppComponent {
     private roomService: RoomService,
     private loginService: LoginService){
       this.loginService.didLogIn.subscribe((user) => {
-        this.setUsername(user)
-        console.log("set username")
+        if(user) {
+          this.setUsername(user)
+        } 
       })
     }
   ngOnInit() {
@@ -46,9 +47,13 @@ export class AppComponent {
         this.socketService.disconnect()
       })
     }
+    this.deleteCookies()
+  }
+
+  deleteCookies(){
+    this.cookieService.removeAll()
   }
   setUsername(username: any): void {
     this.username = username
   }
-  
 }

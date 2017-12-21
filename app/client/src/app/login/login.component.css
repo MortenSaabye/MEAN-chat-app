@@ -1,0 +1,11 @@
+.cookiebanner {
+    background-color: teal;
+    line-height: 2em;
+    display: flex;
+    justify-content: center;
+}
+
+.cookiebanner > p {
+    color: white;
+    font-size: 1.2em;
+}
