@@ -8,6 +8,7 @@ const session = require('express-session')
 const mongoose = require('mongoose')
 const passport = require('passport')
 
+
 //db connection
 const CONNECTION_URI = "mongodb://MortenSaabye:AS3GytR5Jb@ds161136.mlab.com:61136/chat"
 
@@ -31,7 +32,7 @@ var app = express();
 
 //allow CORS
 app.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", '*');
+  res.header("Access-Control-Allow-Origin", 'http://localhost:4200');
   res.header("Access-Control-Allow-Methods", "GET,PUT,POST,PATCH,DELETE")
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   next();
@@ -57,14 +58,18 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session())
 
+
+
 //Import and register all routers
 var index = require('./routes/index');
 var users = require('./routes/users');
 const rooms = require('./routes/rooms')
 
-app.use('/', index);
+
+app.use('/', index)
 app.use('/api/users', users);
 app.use('/api/rooms', rooms);
+
 
 
 

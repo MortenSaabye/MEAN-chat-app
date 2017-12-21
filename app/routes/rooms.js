@@ -4,7 +4,6 @@ const mongoose = require('mongoose')
 const Room = mongoose.model('Room')
 const Message = mongoose.model('Message')
 
-
 //retrieve all rooms from the DB
 router.get('/', (req, res) => {
   Room.find((err, rooms) => {
@@ -33,6 +32,13 @@ router.post('/', (req, res) => {
     }
   })
 })
+// get a single roomname
+router.get('/roomname/:id', (req, res) => {
+  const id = req.params.id
+  Room.findById(id, (err, result) => {
+    res.json({"roomname": result.roomname})
+  })
+})
 
 router.patch('/join', (req, res) =>{
   const roomId = mongoose.Types.ObjectId(req.body.roomId)
@@ -41,7 +47,7 @@ router.patch('/join', (req, res) =>{
   Room.findById(roomId, (err, room) => {
     room.users.push(req.body.userId)
     room.save()
-    res.json({"message": `Joined the room ${room.roomname}`})
+    res.json({"message": room.roomname})
   })
 })
 
@@ -60,17 +66,17 @@ router.patch('/leave', (req, res) =>{
 router.get('/:room/users', (req, res) => {
   const roomId = req.params.room
   Room.findById(roomId).populate('users', ['username', 'currentMood']).exec((err, room) => {
-    console.log(room.users)
     res.json(room.users)
   })
 })
+
+
 
 
 // Get all messages from a room
 router.get('/:room/messages', (req, res) => {
   const roomId = req.params.room
   Message.find({"room": roomId}).populate('user', ['username', 'currentMood']).exec((err, messages) => {
-    console.log(messages)
     res.json(messages)
   })
 })
@@ -82,13 +88,11 @@ router.post('/:room/send', (req, res) => {
   const userId = req.body.user._id
   message.room = roomId
   message.user = userId
-
   message.save((err, message) => {
     res.json(message)
   })
 })
 
-
-
-
 module.exports = router;
+
+

@@ -1,0 +1,7 @@
+p.roomname {
+    font-size: 1.3em;
+    font-weight: bold;
+}
+.room-link{
+    cursor: pointer;
+}

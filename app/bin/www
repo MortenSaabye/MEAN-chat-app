@@ -7,7 +7,7 @@
 var app = require('../app');
 var debug = require('debug')('server:server');
 var http = require('http');
-
+const socketio = require('socket.io')
 /**
  * Get port from environment and store in Express.
  */
@@ -20,6 +20,35 @@ app.set('port', port);
  */
 
 var server = http.createServer(app);
+const io = socketio(server)
+io.on('connection', (socket) => {
+  console.log(`Client connected ${io.sockets}`)
+  
+  socket.on('join', (roomId) => {
+    socket.join(roomId)
+    console.log(io.sockets.adapter.rooms[roomId])
+    console.log(`client joined ${roomId}`)
+    io.in(roomId).emit('subscriber', roomId)
+  })
+
+  socket.on('leave', (roomId) => {
+    socket.leave(roomId)
+    io.in(roomId).emit('subscriber', roomId)
+  })
+
+  socket.on('room', (roomname) => {
+    console.log(`received event for creation of ${roomname}`)
+    socket.broadcast.emit('room')
+  })
+
+  socket.on('message', (roomId) => {
+    io.in(roomId).emit('message', roomId)
+  })
+
+  socket.on('disconnect', ()=> {
+    console.log('client disconnected')
+  })
+})
 
 /**
  * Listen on provided port, on all network interfaces.

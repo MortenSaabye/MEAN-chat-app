@@ -1,0 +1,24 @@
+<div class="row">
+  <div class="col s8">
+    <div class="row">
+        <h3 class="col s10 roomheader">{{roomname}}</h3>
+        <a (click)="goBack()" class="waves-effect back col s2 waves-light btn">go back</a>
+    </div>
+    <div class="message-container" *ngFor="let message of messages">
+      <div [class.sent]="message.received === 'false'" [class.received]="message.received === 'true'">
+        <p class="message">{{message.message}}</p>
+        <p class="sender">{{message.user.username}}</p>
+      </div>
+    </div>
+  </div>
+  <div class="col s4">
+    <app-subscribers></app-subscribers>
+  </div>
+</div>
+<div class="row">
+  <div class="message-sender">
+    <app-send-message [roomId]="roomId" (newMessage)="newMessage($event)"></app-send-message>
+  </div>
+</div>
+
+

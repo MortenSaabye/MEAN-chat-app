@@ -1,0 +1,16 @@
+<div class="col s8">
+  <ul class="collection">
+    <a class="collection-item" *ngFor="let room of rooms" >
+      <a (click)="joinRoom(room._id)">
+        <div class="room-link">
+            <p class="roomname">{{room.roomname}}</p>
+            <p class="about">{{room.about}}</p>
+        </div>
+      </a>
+    </a>
+  </ul>
+  <input type="text" placeholder="Room name" [(ngModel)]="roomName"/>
+  <textarea id="textarea1" class="materialize-textarea" type="text" placeholder="What is the chatroom about?" [(ngModel)]="about"></textarea>
+  <a (click)="createRoom()" class="waves-effect waves-light btn">Create new room</a>
+</div>
+
